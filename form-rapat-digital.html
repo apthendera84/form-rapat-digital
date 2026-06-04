@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web App - Form Rapat Digital</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f0f2f5;
+            font-family: 'Inter', sans-serif;
+        }
+        .app-header {
+            background: linear-gradient(135deg, #044343 0%, #082727 100%);
+        }
+        /* Style khusus untuk mensimulasikan kertas A4 di area Live Preview */
+        .a4-preview {
+            background-color: #ffffff;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            min-height: 297mm;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <header class="app-header text-white px-6 py-4 shadow-md flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
+        <div>
+            <h1 class="text-xl font-bold flex items-center gap-2">
+                <i class="fa-solid fa-laptop-code text-teal-400"></i> Form Rapat Digital Workspace
+            </h1>
+            <p class="text-xs text-gray-300">Aplikasi web pembuat berita acara, daftar hadir, dan tindak lanjut rapat secara instan.</p>
+        </div>
+        <div class="flex items-center gap-2">
+            <span class="bg-teal-900/50 text-teal-300 text-xs px-3 py-1.5 rounded-full border border-teal-700/50 font-medium">
+                <i class="fa-solid fa-circle text-emerald-400 text-[8px] mr-1.5 animate-pulse"></i> Web App Active
+            </span>
+        </div>
+    </header>
+
+    <main class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 p-4 md:p-6 max-w-[1600px] w-full mx-auto">
+        
+        <section class="lg:col-span-5 space-y-4 max-h-[calc(100vh-120px)] lg:overflow-y-auto pr-0 lg:pr-2">
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+                <h2 class="text-sm font-bold text-gray-800 uppercase tracking-wider mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-sliders text-teal-600"></i> Kontrol Input Data
+                </h2>
+                
+                <form id="meetingForm" class="space-y-4">
+                    
+                    <div class="bg-gray-50/50 p-4 rounded-xl border border-gray-100 space-y-3">
+                        <span class="text-xs font-bold text-teal-700 block uppercase">1. Parameter Rapat</span>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1">Judul Rapat</label>
+                            <input type="text" id="judul" oninput="updateLivePreview()" placeholder="Contoh: Rapat Komite Nakesla" class="w-full p-2.5 border border-gray-200 rounded-lg focus:outline-none focus:border-teal-600 text-xs text-gray-700">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1">Tanggal Rapat</label>
+                            <input type="date" id="tanggal" onchange="updateLivePreview()" class="w-full p-2.5 border border-gray-200 rounded-lg focus:outline-none focus:border-teal-600 text-xs text-gray-700">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1">Lokasi Rapat</label>
+                            <select id="lokasi" onchange="toggleLokasiLainnya(this.value); updateLivePreview();" class="w-full p-2.5 border border-gray-200 rounded-lg focus:outline-none focus:border-teal-600 text-xs text-gray-700 bg-white">
+                                <option value="" disabled selected>Pilih lokasi rapat</option>
+                                <option value="Ruang Rapat Besar">Ruang Rapat Besar</option>
+                                <option value="Ruang Rapat Komite Medik">Ruang Rapat Komite Medik</option>
+                                <option value="Ruang Rapat SPI">Ruang Rapat SPI</option>
+                                <option value="Lainnya">Ruang Rapat Lainnya</option>
+                            </select>
+                        </div>
+                        <div id="div-lokasi-lainnya" class="hidden">
+                            <label class="block text-xs font-semibold text-gray-600 mb-1">Nama Ruang Rapat Lainnya</label>
+                            <input type="text" id="lokasi_lainnya" oninput="updateLivePreview()" placeholder="Masukkan nama ruang rapat..." class="w-full p-2.5 border border-gray-200 rounded-lg focus:outline-none focus:border-teal-600 text-xs text-gray-700">
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 mb-1">Pimpinan Rapat</label>
+                                <input type="text" id="pimpinan" oninput="updateLivePreview()" placeholder="Nama pimpinan" class="w-full p-2.5 border border-gray-200 rounded-lg focus:outline-none focus:border-teal-600 text-xs text-gray-700">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 mb-1">Notulen</label>
+                                <input type="text" id="notulen" oninput="updateLivePreview()" placeholder="Nama notulen" class="w-full p-2.5 border border-gray-200 rounded-lg focus:outline-none focus:border-teal-600 text-xs text-gray-700">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-50/50 p-4 rounded-xl border border-gray-100 space-y-3">
+                        <span class="text-xs font-bold text-teal-700 block uppercase">2. Isi Pembahasan</span>
+                        <div>
+                            <textarea id="pembahasan" oninput="updateLivePreview()" rows="4" placeholder="Tuliskan masukan dan poin-poin penting pembahasan rapat di sini..." class="w-full p-2.5 border border-gray-200 rounded-lg focus:outline-none focus:border-teal-600 text-xs text-gray-700 placeholder-gray-400"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-50/50 p-4 rounded-xl border border-gray-100 space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-bold text-teal-700 uppercase">3. Peserta & Keterangan</span>
+                            <button type="button" onclick="addPesertaRow()" class="text-[11px] bg-teal-600 hover:bg-teal-700 text-white font-medium py-1 px-2.5 rounded-md transition-colors flex items-center gap-1">
+                                <i class="fa-solid fa-plus"></i> Tambah Baris
+                            </button>
+                        </div>
+                        
+                        <div class="space-y-2 max-h-60 overflow-y-auto pr-1" id="form-peserta-container">
+                            </div>
+                    </div>
+
+                    <div class="bg-gray-50/50 p-4 rounded-xl border border-gray-100 space-y-3">
+                        <span class="text-xs font-bold text-teal-700 block uppercase">4. Dokumentasi</span>
+                        <input type="file" id="fotoInput" accept="image/*" class="w-full text-xs text-gray-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-teal-50 file:text-teal-700 hover:file:bg-teal-100">
+                    </div>
+
+                    <div class="pt-2 grid grid-cols-3 gap-2">
+                        <button type="button" onclick="resetForm()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2.5 rounded-xl transition-colors text-xs text-center shadow-sm">
+                            Reset Form
+                        </button>
+                        <button type="button" onclick="exportToDoc()" class="col-span-2 bg-[#006d63] hover:bg-[#00524a] text-white font-semibold py-2.5 rounded-xl transition-colors text-xs text-center shadow-md flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-file-word"></i> Simpan ke Word (.doc)
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </section>
+
+        <section class="lg:col-span-7 flex flex-col space-y-3 max-h-[calc(100vh-120px)] lg:overflow-y-auto px-2">
+            <div class="flex justify-between items-center bg-white px-4 py-2.5 rounded-xl border border-gray-100 shadow-sm">
+                <span class="text-xs font-bold text-gray-500 uppercase flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+                    <i class="fa-solid fa-eye text-teal-600"></i> Live Document Preview (A4 View)
+                </span>
+                <span class="text-[11px] text-gray-400 font-mono">Skala Cetak 100%</span>
+            </div>
+
+            <div class="a4-preview p-8 md:p-12 text-gray-800 text-sm border border-gray-200 rounded-2xl">
+                <div class="text-center border-b-2 border-[#006d63] pb-3 mb-6">
+                    <h3 class="text-lg md:text-xl font-bold text-[#044343] tracking-wide m-0 uppercase" id="prev-header-title">FORM RAPAT DIGITAL</h3>
+                    <p class="text-xs text-gray-500 m-0 mt-1">Dokumen Hasil Catatan & Daftar Hadir Keterangan Rapat</p>
+                </div>
+
+                <div class="mb-5">
+                    <h4 class="text-xs font-bold text-[#006d63] border-l-4 border-[#006d63] pl-2 uppercase tracking-wide mb-2">I. INFORMASI RAPAT</h4>
+                    <table class="w-full text-xs text-gray-700 border-collapse">
+                        <tr>
+                            <td class="w-1/4 font-semibold py-1">Judul Rapat</td>
+                            <td class="w-3/4 py-1" id="prev-judul">: -</td>
+                        </tr>
+                        <tr>
+                            <td class="font-semibold py-1">Tanggal Rapat</td>
+                            <td class="py-1" id="prev-tanggal">: -</td>
+                        </tr>
+                        <tr>
+                            <td class="font-semibold py-1">Lokasi Rapat</td>
+                            <td class="py-1" id="prev-lokasi">: -</td>
+                        </tr>
+                        <tr>
+                            <td class="font-semibold py-1">Pimpinan Rapat</td>
+                            <td class="py-1" id="prev-pimpinan">: -</td>
+                        </tr>
+                        <tr>
+                            <td class="font-semibold py-1">Notulen</td>
+                            <td class="py-1" id="prev-notulen">: -</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="mb-5">
+                    <h4 class="text-xs font-bold text-[#006d63] border-l-4 border-[#006d63] pl-2 uppercase tracking-wide mb-3">II. DAFTAR PESERTA & KETERANGAN</h4>
+                    <table class="w-full text-xs border-collapse border border-gray-200">
+                        <thead>
+                            <tr class="bg-gray-50 text-gray-700">
+                                <th class="border border-gray-200 p-2 text-center w-12">No</th>
+                                <th class="border border-gray-200 p-2 text-left">Nama Peserta</th>
+                                <th class="border border-gray-200 p-2 text-center w-24">Jam Hadir</th>
+                                <th class="border border-gray-200 p-2 text-left w-40">Keterangan</th>
+                            </tr>
+                        </thead>
+                        <tbody id="prev-tbody-peserta">
+                            </tbody>
+                    </table>
+                </div>
+
+                <div class="mb-8">
+                    <h4 class="text-xs font-bold text-[#006d63] border-l-4 border-[#006d63] pl-2 uppercase tracking-wide mb-2">III. MASUKAN DAN TINDAK LANJUT</h4>
+                    <div class="bg-gray-50 p-3 rounded-lg border border-gray-200 text-xs leading-relaxed text-gray-700 whitespace-pre-line min-h-[60px]" id="prev-pembahasan">-</div>
+                </div>
+
+                <div class="grid grid-cols-2 text-center text-xs mb-8">
+                    <div>
+                        <p class="m-0 font-medium">Pimpinan Rapat,</p>
+                        <div class="h-16"></div>
+                        <p class="m-0 font-bold underline text-gray-900" id="prev-sign-pimpinan">-</p>
+                    </div>
+                    <div>
+                        <p class="m-0 font-medium">Notulen,</p>
+                        <div class="h-16"></div>
+                        <p class="m-0 font-bold underline text-gray-900" id="prev-sign-notulen">-</p>
+                    </div>
+                </div>
+
+                <div id="prev-section-foto" class="hidden">
+                    <h4 class="text-xs font-bold text-[#006d63] border-l-4 border-[#006d63] pl-2 uppercase tracking-wide mb-2">IV. DOKUMENTASI FOTO RAPAT</h4>
+                    <div class="flex justify-center border border-gray-200 p-2 rounded-lg bg-gray-50/50">
+                        <img id="prev-img-element" src="" alt="Foto Rapat" class="max-h-56 object-contain rounded-md">
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        let fotoBase64 = "";
+        let pesertaRows = [];
+
+        window.onload = function() {
+            // Pasang baris peserta pertama bawaan sistem
+            addPesertaRow();
+            // Jalankan sinkronisasi awal
+            updateLivePreview();
+        }
+
+        // Fungsi Memunculkan Isian Tambahan Lokasi "Lainnya"
+        function toggleLokasiLainnya(value) {
+            const divLainnya = document.getElementById('div-lokasi-lainnya');
+            if (value === 'Lainnya') {
+                divLainnya.classList.remove('hidden');
+            } else {
+                divLainnya.classList.add('hidden');
+                document.getElementById('lokasi_lainnya').value = "";
+            }
+        }
+
+        // Menambahkan Baris ke Kontrol Input Kiri
+        function addPesertaRow() {
+            const rowId = 'row-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
+            const container = document.getElementById('form-peserta-container');
+            
+            const newRowHtml = document.createElement('div');
+            newRowHtml.id = rowId;
+            newRowHtml.className = "flex items-center gap-2 bg-white p-2 rounded-lg border border-gray-200 shadow-sm transition-all";
+            
+            newRowHtml.innerHTML = `
+                <span class="text-xs font-bold text-gray-400 p-1 row-index-lbl"></span>
+                <input type="text" oninput="updateLivePreview()" placeholder="Nama Peserta" class="flex-1 p-2 border border-gray-200 rounded focus:outline-none focus:border-teal-600 text-xs input-nama">
+                <input type="time" onchange="updateLivePreview()" class="w-20 p-2 border border-gray-200 rounded focus:outline-none focus:border-teal-600 text-xs input-jam">
+                <input type="text" oninput="updateLivePreview()" placeholder="Keterangan" class="w-32 p-2 border border-gray-200 rounded focus:outline-none focus:border-teal-600 text-xs input-ket">
+                <button type="button" onclick="removePesertaRow('${rowId}')" class="text-red-400 hover:text-red-600 p-1 transition-colors">
+                    <i class="fa-solid fa-trash-can text-xs"></i>
+                </button>
+            `;
+            
+            container.appendChild(newRowHtml);
+            pesertaRows.push(rowId);
+            reindexFormRows();
+            updateLivePreview();
+        }
+
+        // Menghapus Baris Kontrol Input Kiri
+        function removePesertaRow(rowId) {
+            if(pesertaRows.length <= 1) {
+                alert("Minimal harus menyisakan 1 baris peserta rapat!");
+                return;
+            }
+            const el = document.getElementById(rowId);
+            if(el) el.remove();
+            pesertaRows = pesertaRows.filter(id => id !== rowId);
+            reindexFormRows();
+            updateLivePreview();
+        }
+
+        // Pengurutan Ulang Label Angka di Input Form
+        function reindexFormRows() {
+            pesertaRows.forEach((id, idx) => {
+                const el = document.getElementById(id);
+                if(el) {
+                    el.querySelector('.row-index-lbl').innerText = idx + 1;
+                }
+            });
+        }
+
+        // ENGINE LIVE PREVIEW: Menyelaraskan Data Kiri ke Tampilan Kertas Kanan Secara Otomatis
+        function updateLivePreview() {
+            // 1. Sinkronisasi Data Parameter Utama
+            const judulVal = document.getElementById('judul').value || '-';
+            const tanggalVal = document.getElementById('tanggal').value || '-';
+            const pimpinanVal = document.getElementById('pimpinan').value || '-';
+            const notulenVal = document.getElementById('notulen').value || '-';
+            
+            let lokasiVal = document.getElementById('lokasi').value || '-';
+            if (lokasiVal === 'Lainnya') {
+                lokasiVal = document.getElementById('lokasi_lainnya').value || 'Ruang Rapat Lainnya';
+            }
+
+            document.getElementById('prev-judul').innerText = ': ' + judulVal;
+            document.getElementById('prev-header-title').innerText = judulVal !== '-' ? judulVal : 'FORM RAPAT DIGITAL';
+            document.getElementById('prev-tanggal').innerText = ': ' + formatTanggalIndo(tanggalVal);
+            document.getElementById('prev-lokasi').innerText = ': ' + lokasiVal;
+            document.getElementById('prev-pimpinan').innerText = ': ' + pimpinanVal;
+            document.getElementById('prev-notulen').innerText = ': ' + notulenVal;
+            
+            document.getElementById('prev-sign-pimpinan').innerText = pimpinanVal;
+            document.getElementById('prev-sign-notulen').innerText = notulenVal;
+
+            // 2. Sinkronisasi Pembahasan
+            const pembahasanVal = document.getElementById('pembahasan').value || '-';
+            document.getElementById('prev-pembahasan').innerText = pembahasanVal;
+
+            // 3. Sinkronisasi Tabel Daftar Peserta Kanan
+            const prevTbody = document.getElementById('prev-tbody-peserta');
+            prevTbody.innerHTML = "";
+
+            pesertaRows.forEach((id, index) => {
+                const el = document.getElementById(id);
+                if(el) {
+                    const nama = el.querySelector('.input-nama').value || '-';
+                    const jam = el.querySelector('.input-jam').value || '-';
+                    const ket = el.querySelector('.input-ket').value || '-';
+
+                    const tr = document.createElement('tr');
+                    tr.className = "hover:bg-gray-50/70 text-gray-700";
+                    tr.innerHTML = `
+                        <td class="border border-gray-200 p-2 text-center font-medium">${index + 1}</td>
+                        <td class="border border-gray-200 p-2">${nama}</td>
+                        <td class="border border-gray-200 p-2 text-center">${jam}</td>
+                        <td class="border border-gray-200 p-2">${ket}</td>
+                    `;
+                    prevTbody.appendChild(tr);
+                }
+            });
+        }
+
+        // Listener Proses Gambar Upload Dokumentasi
+        document.getElementById('fotoInput').addEventListener('change', function(event) {
+            const reader = new FileReader();
+            reader.onload = function() {
+                fotoBase64 = reader.result;
+                document.getElementById('prev-img-element').src = fotoBase64;
+                document.getElementById('prev-section-foto').classList.remove('hidden');
+            }
+            if(event.target.files[0]) {
+                reader.readAsDataURL(event.target.files[0]);
+            }
+        });
+
+        // Formatter Cantik untuk Tampilan Tanggal Indonesia
+        function formatTanggalIndo(dateStr) {
+            if(!dateStr || dateStr === '-') return '-';
+            const opsi = { year: 'numeric', month: 'long', day: 'numeric' };
+            return new Date(dateStr).toLocaleDateString('id-ID', opsi);
+        }
+
+        // Fungsi Reset Form Aplikasi Web
+        function resetForm() {
+            if(confirm("Apakah Anda yakin ingin mengosongkan seluruh form data ini?")) {
+                document.getElementById('meetingForm').reset();
+                document.getElementById('div-lokasi-lainnya').classList.add('hidden');
+                document.getElementById('prev-section-foto').classList.add('hidden');
+                document.getElementById('prev-img-element').src = "";
+                document.getElementById('form-peserta-container').innerHTML = "";
+                fotoBase64 = "";
+                pesertaRows = [];
+                addPesertaRow();
+                updateLivePreview();
+            }
+        }
+
+        // ENGINE EXPORT: Konversi Instan ke Dokumen Microsoft Word (.doc)
+        function exportToDoc() {
+            const tanggal = document.getElementById('tanggal').value || '-';
+            let lokasi = document.getElementById('lokasi').value || '-';
+            if (lokasi === 'Lainnya') {
+                lokasi = document.getElementById('lokasi_lainnya').value || 'Lainnya';
+            }
+            const judul = document.getElementById('judul').value || 'Form Rapat Digital';
+            const pimpinan = document.getElementById('pimpinan').value || '-';
+            const notulen = document.getElementById('notulen').value || '-';
+            const pembahasan = document.getElementById('pembahasan').value || '-';
+
+            let pesertaHtmlRows = "";
+            pesertaRows.forEach((id, index) => {
+                const el = document.getElementById(id);
+                if(el) {
+                    const nama = el.querySelector('.input-nama').value || '-';
+                    const jam = el.querySelector('.input-jam').value || '-';
+                    const ket = el.querySelector('.input-ket').value || '-';
+                    pesertaHtmlRows += `
+                        <tr>
+                            <td style="border: 1px solid #ccdddd; padding: 8px; text-align: center;">${index + 1}</td>
+                            <td style="border: 1px solid #ccdddd; padding: 8px;">${nama}</td>
+                            <td style="border: 1px solid #ccdddd; padding: 8px; text-align: center;">${jam}</td>
+                            <td style="border: 1px solid #ccdddd; padding: 8px;">${ket}</td>
+                        </tr>
+                    `;
+                }
+            });
+
+            if(pesertaRows.length === 0) {
+                pesertaHtmlRows = `<tr><td colspan="4" style="border:1px solid #ccdddd; padding:8px; text-align:center; color:#999;">Tidak ada daftar peserta</td></tr>`;
+            }
+
+            let docContent = `
+            <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+            <head>
+                <title>${judul}</title>
+                <style>
+                    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333333; }
+                    .header { text-align: center; border-bottom: 2px solid #006d63; padding-bottom: 10px; margin-bottom: 20px; }
+                    .title { font-size: 18pt; font-weight: bold; color: #044343; margin: 0; text-transform: uppercase; }
+                    .subtitle { font-size: 10pt; color: #666666; margin: 5px 0 0 0; }
+                    .table-info { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+                    .table-info td { padding: 6px; vertical-align: top; font-size: 11pt; }
+                    .table-info td.label { width: 25%; font-weight: bold; color: #555555; }
+                    .section-title { font-size: 12pt; font-weight: bold; color: #006d63; border-left: 4px solid #006d63; padding-left: 8px; margin-top: 20px; margin-bottom: 10px; }
+                    .content-box { background-color: #f9f9f9; padding: 12px; border: 1px solid #e3e3e3; border-radius: 6px; min-height: 50px; font-size: 11pt; }
+                    .table-peserta { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 10.5pt; }
+                    .table-peserta th { background-color: #006d63; color: white; padding: 8px; border: 1px solid #00524a; text-align: left; }
+                    .photo-box { text-align: center; margin-top: 15px; }
+                    .photo-box img { max-width: 450px; border: 1px solid #ddd; padding: 4px; }
+                    .signature-table { width: 100%; border-collapse: collapse; margin-top: 40px; border: none; }
+                    .signature-table td { width: 50%; text-align: center; border: none; vertical-align: top; font-size: 11pt; }
+                </style>
+            </head>
+            <body>
+                <div class="header">
+                    <p class="title">${judul.toUpperCase()}</p>
+                    <p class="subtitle">Dokumen Hasil Catatan & Daftar Hadir Keterangan Rapat</p>
+                </div>
+
+                <div class="section-title">I. INFORMASI RAPAT</div>
+                <table class="table-info">
+                    <tr>
+                        <td class="label">Judul Rapat</td>
+                        <td>: ${judul}</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Tanggal Rapat</td>
+                        <td>: ${formatTanggalIndo(tanggal)}</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Lokasi Rapat</td>
+                        <td>: ${lokasi}</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Pimpinan Rapat</td>
+                        <td>: ${pimpinan}</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Notulen</td>
+                        <td>: ${notulen}</td>
+                    </tr>
+                </table>
+
+                <div class="section-title">II. DAFTAR PESERTA & KETERANGAN</div>
+                <table class="table-peserta">
+                    <thead>
+                        <tr>
+                            <th style="width: 8%; text-align: center;">No</th>
+                            <th>Nama Peserta</th>
+                            <th style="width: 20%; text-align: center;">Jam Hadir</th>
+                            <th style="width: 30%;">Keterangan</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${pesertaHtmlRows}
+                    </tbody>
+                </table>
+
+                <div class="section-title">III. MASUKAN DAN TINDAK LANJUT</div>
+                <div class="content-box">${pembahasan.replace(/\n/g, '<br>')}</div>
+
+                <table class="signature-table">
+                    <tr>
+                        <td>
+                            <p style="margin: 0;">Pimpinan Rapat,</p>
+                            <br><br><br><br>
+                            <p style="margin: 0; font-weight: bold; text-decoration: underline;">${pimpinan}</p>
+                        </td>
+                        <td>
+                            <p style="margin: 0;">Notulen,</p>
+                            <br><br><br><br>
+                            <p style="margin: 0; font-weight: bold; text-decoration: underline;">${notulen}</p>
+                        </td>
+                    </tr>
+                </table>
+            `;
+
+            if (fotoBase64) {
+                docContent += `
+                <br><br>
+                <div class="section-title">IV. DOKUMENTASI FOTO RAPAT</div>
+                <div class="photo-box">
+                    <img src="${fotoBase64}" alt="Dokumentasi Rapat" />
+                </div>
+                `;
+            }
+
+            docContent += `</body></html>`;
+
+            const blob = new Blob(['\ufeff' + docContent], { type: 'application/msword' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${judul.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_form_rapat.doc`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>
